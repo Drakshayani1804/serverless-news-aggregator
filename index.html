@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>News Aggregator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        header {
+            background-color: #4CAF50;
+            padding: 20px;
+            text-align: center;
+            color: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2em;
+        }
+
+        #news {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .article {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .article:hover {
+            transform: translateY(-5px);
+        }
+
+        .article h3 {
+            margin-top: 0;
+            color: #4CAF50;
+        }
+
+        .article p {
+            margin: 10px 0;
+        }
+
+        .article a {
+            text-decoration: none;
+            color: #2196F3;
+            font-weight: bold;
+        }
+
+        .article a:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            text-align: center;
+            padding: 15px;
+            background-color: #4CAF50;
+            color: white;
+            margin-top: 30px;
+        }
+
+        @media (max-width: 600px) {
+            header, footer {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>📰 Latest News Aggregator</h1>
+    </header>
+
+    <div id="news">
+        <p>Loading articles...</p>
+    </div>
+
+    <footer>
+        &copy; 2025 News Aggregator Project
+    </footer>
+
+    <script>
+        async function fetchNews() {
+            try {
+                const response = await fetch('https://bkmfsxi2z7.execute-api.us-east-1.amazonaws.com/read/newspls');
+                const articles = await response.json();
+                
+                const newsContainer = document.getElementById('news');
+                newsContainer.innerHTML = '';
+
+                if (articles.length === 0) {
+                    newsContainer.innerHTML = '<p>No articles found.</p>';
+                    return;
+                }
+
+                articles.forEach(article => {
+                    const articleDiv = document.createElement('div');
+                    articleDiv.className = 'article';
+                    articleDiv.innerHTML = `
+                        <h3>${article.title}</h3>
+                        <p>${article.description}</p>
+                        <a href="${article.url}" target="_blank">Read more</a>
+                        <p><small>Published At: ${article.publishedAt}</small></p>
+                        <p><small>Source: ${article.source}</small></p>
+                    `;
+                    newsContainer.appendChild(articleDiv);
+                });
+            } catch (error) {
+                console.error('Error fetching news:', error);
+                document.getElementById('news').innerHTML = '<p>Error loading articles. Please try again later.</p>';
+            }
+        }
+
+        fetchNews();
+    </script>
+
+</body>
+</html>
